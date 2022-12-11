@@ -1,0 +1,8 @@
+.snakeFood {
+    position: absolute;
+    width: 2%;
+    height: 3%;
+    background-color: red;
+    border: 1px solid #ffffff;
+    z-index: 1;
+}
