@@ -1,3 +1,3 @@
-import { SnakGame } from './SnakeGame';
+import { SnakeGame } from './SnakeGame';
 
-export { SnakGame };
+export { SnakeGame };

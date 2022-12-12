@@ -1,15 +1,15 @@
 import React from 'react';
-import { snakeDot } from './Snake.module.css';
+import styles from './Snake.module.css';
 
-export const Snake = props => {
+export const Snake = ({ snakeDots }) => {
   return (
     <div>
-      {props.snakeDots.map((dot, i) => {
-        const style = {
+      {snakeDots.map((dot, i) => {
+        const position = {
           left: `${dot[0]}%`,
           top: `${dot[1]}%`,
         };
-        return <div className={snakeDot} key={i} style={style}></div>;
+        return <div className={styles.snakeDot} key={i} style={position}></div>;
       })}
     </div>
   );
