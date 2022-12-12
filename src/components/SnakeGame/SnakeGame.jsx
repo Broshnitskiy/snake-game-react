@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Snake } from './Snake/Snake';
 import { Food } from './SnakeFood/Food';
 import './SnakeGame.css';
@@ -76,6 +76,54 @@ export const SnakeGame = () => {
         break;
     }
   };
+
+  useEffect(() => {
+    const enlargeSnake = () => {
+      let newSnake = [...snakeDots];
+      newSnake.unshift([]);
+      setSnakeDots(newSnake);
+    };
+
+    const increaseSpeed = () => {
+      if (speed > 10) {
+        setSpeed(speed - 10);
+      }
+    };
+
+    const gameOver = () => {
+      alert(`Game Over. Snake length is ${snakeDots.length}`);
+    };
+    const checkIfOutOfBorders = () => {
+      let head = snakeDots[snakeDots.length - 1];
+      if (head[0] >= 100 || head[1] >= 100 || head[0] < 0 || head[1] < 0) {
+        gameOver();
+      }
+    };
+
+    const checkIfCollapsed = () => {
+      let snake = [...snakeDots];
+      let head = snake[snake.length - 1];
+      snake.pop();
+      snake.forEach(dot => {
+        if (head[0] === dot[0] && head[1] === dot[1]) {
+          gameOver();
+        }
+      });
+    };
+
+    const checkIfEat = () => {
+      let head = snakeDots[snakeDots.length - 1];
+      if (head[0] === food[0] && head[1] === food[1]) {
+        setFood(getRandomCoordinates());
+        enlargeSnake();
+        increaseSpeed();
+      }
+    };
+
+    checkIfOutOfBorders();
+    checkIfCollapsed();
+    checkIfEat();
+  }, [food, snakeDots, speed]);
 
   return (
     <div className="game-area">
