@@ -1,19 +1,10 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Snake } from './Snake/Snake';
 import { Food } from './SnakeFood/Food';
-import './SnakeGame.css';
-
-const getRandomCoordinates = () => {
-  let min = 1;
-  let max = 98;
-  let x = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 2;
-  let y = Math.floor((Math.random() * (max - min + 1) + min) / 2) * 2;
-  return [x, y];
-};
-
-const getRandomFeedType = () => {
-  return Math.floor(Math.random() * 3);
-};
+import { TypesOfFood } from '../TypesOfFood/TypesOfFood';
+import { GameArea, Section, Wrapper } from './SnakeGame.styled';
+import { getRandomCoordinates } from '../../helpers/getRandomCoordinates';
+import { getRandomFeedType } from '../../helpers/getRandomFeedType';
 
 export const SnakeGame = () => {
   const [food, setFood] = useState(getRandomCoordinates);
@@ -64,6 +55,14 @@ export const SnakeGame = () => {
     };
   }, [direction, pause, snakeDots, speed]);
 
+  useEffect(() => {
+    document.addEventListener('keydown', onKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, []);
+
   const gameOver = useCallback(() => {
     alert(
       `Game Over. Snake length is ${snakeDots.length}, Counter = ${counter}`
@@ -77,14 +76,6 @@ export const SnakeGame = () => {
     setDirection('RIGHT');
     setCounter(0);
   }, [counter, snakeDots.length]);
-
-  useEffect(() => {
-    document.addEventListener('keydown', onKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, []);
 
   useEffect(() => {
     const enlargeSnake = () => {
@@ -166,19 +157,22 @@ export const SnakeGame = () => {
   };
 
   return (
-    <>
-      <div>{`Counter = ${counter}`}</div>
+    <Section>
+      <h1>SNAKE GAME</h1>
       <button onClick={() => setPause(p => !p)}>
         {pause ? 'Play' : 'Pause'}
       </button>
-      <div>Types of food:</div>
-      <div>red - 1 point</div>
-      <div>blue - 5 point</div>
-      <div>green - 10 point</div>
-      <div className="game-area">
-        <Snake snakeDots={snakeDots} />
-        <Food dot={food} feedType={feedType} />
-      </div>
-    </>
+      <Wrapper>
+        <div>
+          <p>Player:</p>
+          <p>{`Counter = ${counter}`}</p>
+          <TypesOfFood />
+        </div>
+        <GameArea>
+          <Snake snakeDots={snakeDots} />
+          <Food dot={food} feedType={feedType} />
+        </GameArea>
+      </Wrapper>
+    </Section>
   );
 };
