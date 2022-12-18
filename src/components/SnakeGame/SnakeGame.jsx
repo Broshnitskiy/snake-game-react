@@ -6,7 +6,7 @@ import { GameArea, Section, Wrapper } from './SnakeGame.styled';
 import { getRandomCoordinates } from '../../helpers/getRandomCoordinates';
 import { getRandomFeedType } from '../../helpers/getRandomFeedType';
 
-export const SnakeGame = () => {
+export const SnakeGame = ({ playerName }) => {
   const [food, setFood] = useState(getRandomCoordinates);
   const [snakeDots, setSnakeDots] = useState([
     [0, 0],
@@ -65,7 +65,7 @@ export const SnakeGame = () => {
 
   const gameOver = useCallback(() => {
     alert(
-      `Game Over. Snake length is ${snakeDots.length}, Counter = ${counter}`
+      `Game Over. Snake length is ${snakeDots.length}, Counter = ${counter}.`
     );
     setFood(getRandomCoordinates());
     setSnakeDots([
@@ -156,6 +156,8 @@ export const SnakeGame = () => {
     }
   };
 
+  
+
   return (
     <Section>
       <h1>SNAKE GAME</h1>
@@ -164,7 +166,7 @@ export const SnakeGame = () => {
       </button>
       <Wrapper>
         <div>
-          <p>Player:</p>
+          <p> {`Player: ${playerName}`}</p>
           <p>{`Counter = ${counter}`}</p>
           <TypesOfFood />
         </div>
