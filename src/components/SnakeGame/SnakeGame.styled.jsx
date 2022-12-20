@@ -13,7 +13,7 @@ export const Section = styled.section`
     display: block;
     width: 100px;
     height: 50px;
-    margin: 0 auto;
+    margin: 40px auto;
     cursor: pointer;
   }
 `;
@@ -22,7 +22,7 @@ export const Wrapper = styled.div`
   padding-top: 24px;
   padding-bottom: 44px;
   display: flex;
-  justify-content: center;
+  justify-content: space-evenly;
 
   div {
     text-align: left;

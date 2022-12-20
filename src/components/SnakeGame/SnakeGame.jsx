@@ -5,6 +5,12 @@ import { TypesOfFood } from '../TypesOfFood/TypesOfFood';
 import { GameArea, Section, Wrapper } from './SnakeGame.styled';
 import { getRandomCoordinates } from '../../helpers/getRandomCoordinates';
 import { getRandomFeedType } from '../../helpers/getRandomFeedType';
+import {
+  getPlayers,
+  addPlayer,
+  updatePlayer,
+} from '../../helpers/fetch-beckend';
+import { BestPlayersList } from '../BestPlayersList/BestPlayersList';
 
 export const SnakeGame = ({ playerName }) => {
   const [food, setFood] = useState(getRandomCoordinates);
@@ -17,6 +23,20 @@ export const SnakeGame = ({ playerName }) => {
   const [pause, setPause] = useState(false);
   const [counter, setCounter] = useState(0);
   const [feedType, setFeedType] = useState(getRandomFeedType());
+  const [allPlayers, setAllPlayers] = useState([]);
+  const [error, setError] = useState(null);
+
+  async function fetchPlayers() {
+    try {
+      const data = await getPlayers();
+      setAllPlayers(data.result);
+    } catch (error) {
+      setError(error);
+    }
+  }
+  useEffect(() => {
+    fetchPlayers();
+  }, []);
 
   useEffect(() => {
     if (pause) {
@@ -75,7 +95,35 @@ export const SnakeGame = ({ playerName }) => {
     setSpeed(200);
     setDirection('RIGHT');
     setCounter(0);
-  }, [counter, snakeDots.length]);
+
+    const nameExist = allPlayers.find(({ name }) => name === playerName);
+    const counterToString = String(counter);
+    const playerData = { name: playerName, counter: counterToString };
+
+    if (nameExist && nameExist.counter < counter) {
+      async function fetchUpdatePlayer() {
+        try {
+          await updatePlayer(nameExist._id, playerData);
+          fetchPlayers();
+        } catch (error) {
+          setError(error);
+        }
+      }
+      fetchUpdatePlayer();
+    }
+
+    if (!nameExist) {
+      async function fetchAddPlayer() {
+        try {
+          await addPlayer(playerData);
+          fetchPlayers();
+        } catch (error) {
+          setError(error);
+        }
+      }
+      fetchAddPlayer();
+    }
+  }, [allPlayers, counter, playerName, snakeDots.length]);
 
   useEffect(() => {
     const enlargeSnake = () => {
@@ -156,24 +204,27 @@ export const SnakeGame = ({ playerName }) => {
     }
   };
 
-  
-
   return (
     <Section>
       <h1>SNAKE GAME</h1>
-      <button onClick={() => setPause(p => !p)}>
-        {pause ? 'Play' : 'Pause'}
-      </button>
+
+      {error && <p>Whoops, something went wrong: {error.message}</p>}
       <Wrapper>
         <div>
-          <p> {`Player: ${playerName}`}</p>
-          <p>{`Counter = ${counter}`}</p>
+          <p> {`Player: ${playerName}.`}</p>
+          <p>{`Counter = ${counter}.`}</p>
           <TypesOfFood />
+          <button onClick={() => setPause(p => !p)}>
+            {pause ? 'Play' : 'Pause'}
+          </button>
         </div>
+
         <GameArea>
           <Snake snakeDots={snakeDots} />
           <Food dot={food} feedType={feedType} />
         </GameArea>
+
+        {allPlayers.length > 0 && <BestPlayersList allPlayers={allPlayers} />}
       </Wrapper>
     </Section>
   );
